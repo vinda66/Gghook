@@ -2,6 +2,139 @@ local DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/
 local window = DrRayLibrary:Load("DrRay", "Default")
 - - combat
 local tab = DrRayLibrary.newTab("combat", "ImageIdHere")
-tab.newButton("Button", "heads", function()
-    print('Hello!')
+tab.newToggle("Toggle hbe", "Toggle hbe (hitbox expander)", true, function(toggleState)
+    Hitbox = toggleState 
+end) 
+tab.newSlider("hitbox size", "hitbox expander slider", 20, false, function(num)
+    headsize = num
+end)
+--
+local function modifyPlayerHeads()
+    for i, v in next, game.Workspace:GetChildren() do
+        if v.Name == "Model" and v:FindFirstChild("Head") then
+            local head = v.Head
+            if head then
+                local success, _ = pcall(function()
+                    head.Size = Vector3.new(headsize, headsize, headsize)
+                    head.Transparency = 0.5
+                end)
+                if not success then
+                    warn("Failed to modify head for player:", v.Name)
+                end
+            end
+        end
+    end
+end
+--
+game:GetService("RunService").RenderStepped:Connect(function()
+    if Hitbox then
+        modifyPlayerHeads()
+    end
+end)
+- - Visual
+local tab = DrRayLibrary.newTab("visuals", "ImageIdHere")
+tab.newButton("esp", "high lights", function()
+local function createHighlight(object)
+    if not object:FindFirstChild("Highlight") then
+        local highlight = Instance.new("Highlight")
+        highlight.Parent = object
+        highlight.FillColor = Color3.fromRGB(255, 0, 0)
+        highlight.FillTransparency = 0.5
+        highlight.OutlineColor = Color3.fromRGB(0, 0, 0)
+        highlight.OutlineTransparency = 0.5
+    end
+end
+--
+for _, object in pairs(workspace:GetChildren()) do
+    if object:FindFirstChild("Head") then
+        createHighlight(object)
+    end
+end
+--
+workspace.ChildAdded:Connect(function(child)
+    if child:FindFirstChild("Head") then
+        createHighlight(child)
+    end
+end)
+end)
+-- tc esp
+tab.newButton("tc esp", "yellow", function()
+local HighlightColor = Color3.fromRGB(255, 255, 100)
+--
+function highlightBaseParts()
+    for _, model in ipairs(workspace:GetDescendants()) do
+        if model:IsA("Model") and model.PrimaryPart and model.PrimaryPart.Name == "Base" then
+            if not model:FindFirstChild("BaseHighlight") then
+                local highlight = Instance.new("Highlight")
+                highlight.Name = "BaseHighlight"
+                highlight.FillColor = HighlightColor
+                highlight.OutlineColor = HighlightColor
+                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                highlight.Adornee = model
+                highlight.Parent = model
+            end
+        end
+    end
+end
+--
+highlightBaseParts()
+--
+workspace.DescendantAdded:Connect(function(descendant)
+    if descendant:IsA("Model") and descendant.PrimaryPart and descendant.PrimaryPart.Name == "Base" then
+        task.wait(0.1)
+        highlightBaseParts()
+    end
+end)
+end)
+-- ore esp
+tab.newButton("ore esp", "blue", function()
+local HighlightColor = Color3.fromRGB(100, 200, 255)
+local LastChecked = 0
+local CheckInterval = 1 
+local highlightedParts = {}  
+--
+local function highlightLimestoneParts()
+    local currentTime = tick()
+    --
+    if currentTime - LastChecked < CheckInterval then
+        return
+    end
+--
+    LastChecked = currentTime
+--
+  for _, instance in ipairs(workspace:GetDescendants()) do
+        if instance:IsA("BasePart") and instance.Material == Enum.Material.Limestone then
+            if not highlightedParts[instance] then
+                local highlight = Instance.new("Highlight")
+                highlight.Name = "LimestoneHighlight"
+                highlight.FillColor = HighlightColor
+                highlight.OutlineColor = HighlightColor
+                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                highlight.Adornee = instance
+                highlight.Parent = instance
+--
+                highlightedParts[instance] = highlight
+            end
+        end
+    end
+end
+--
+highlightLimestoneParts()
+    --
+workspace.DescendantAdded:Connect(function(descendant)
+--  
+    if descendant:IsA("BasePart") and descendant.Material == Enum.Material.Limestone then
+        if not highlightedParts[descendant] then
+            local highlight = Instance.new("Highlight")
+            highlight.Name = "LimestoneHighlight"
+            highlight.FillColor = HighlightColor
+            highlight.OutlineColor = HighlightColor
+            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+            highlight.Adornee = descendant
+            highlight.Parent = descendant
+ --         
+            highlightedParts[descendant] = highlight
+        end
+    end
+end)
 end)
