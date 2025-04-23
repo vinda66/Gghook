@@ -1,14 +1,37 @@
 local DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/DrRay-UI-Library/main/DrRay.lua"))()
 local window = DrRayLibrary:Load("DrRay", "Default")
 local tab = DrRayLibrary.newTab("combat", "ImageIdHere")
-tab.newButton("Button", "hitbox", function()
-    print('hitbox')
-end)
-tab.newKeybind("ключ", "Press the key to start; it will be printed out.", function(gghook-gg07hook.bi)
-    print(gghook-gg07hook.bi)
-end)
 local mainColor = Color3.fromRGB(10, 30, 10) -- Customize as you wish; these are in RGB format. (mainColor applies to main colors like background, buttons, etc.)
 
 local secondColor = Color3.fromRGB(50, 50, 10) -- Secondary Color; applies to Toggle when activated and slider background.
 
 window:SetTheme(mainColor, secondColor)
+tab.newToggle("Toggle hbe", "Toggle hbe (hitbox expander)", true, function(toggleState)
+    Hitbox = toggleState 
+end) 
+tab.newSlider("hitbox size", "hitbox expander slider", 7, false, function(num)
+    headsize = num
+end)
+--
+local function modifyPlayerHeads()
+    for i, v in next, game.Workspace:GetChildren() do
+        if v.Name == "Model" and v:FindFirstChild("Head") then
+            local head = v.Head
+            if head then
+                local success, _ = pcall(function()
+                    head.Size = Vector3.new(headsize, headsize, headsize)
+                    head.Transparency = 0.5
+                end)
+                if not success then
+                    warn("Failed to modify head for player:", v.Name)
+                end
+            end
+        end
+    end
+end
+--
+game:GetService("RunService").RenderStepped:Connect(function()
+    if Hitbox then
+        modifyPlayerHeads()
+    end
+end)
