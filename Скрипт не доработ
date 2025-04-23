@@ -1,6 +1,23 @@
 local DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/DrRay-UI-Library/main/DrRay.lua"))()
 local window = DrRayLibrary:Load("DrRay", "Default")
 - - combat
+local tab = DrRayLibrary.newTab("Combat", "ImageIdHere")
+tab.newButton("silent aim", "", function()
+local modules = { ["Camera"] = {}, ["Player"] = {}, ["Character"] = {}, ["Inventory"] = {}, ["RangedWeapon"] = {}, ["BowSpecial"] = {}, ["FPS"] = {}, ["NetWork"] = {}, ["ClimbingPick"] = {}, ["BuildingTool"] = {}, ["Consumable"] = {}, ["Melee"] = {}, ["MiningDrill"] = {}, ["PlaceEntity"] = {}, ["PortableAnvil"] = {}, ["PortableWorkbench"] = {}, ["InputManager"] = {}, ["Particle"] = {}, ["Settings"] = {}, ["Sound"] = {}, ["UI"] = {}, }
+for _, v in pairs(getgc(true)) do if typeof(v) == "function" and islclosure(v) then local info = debug.getinfo(v) local name = string.match(info.short_src, "%.([%w_]+)$") if name and modules[name] and info.name ~= nil then modules[name][info.name] = info.func end end end
+local workspace,camera = cloneref(game:GetService("Workspace")), workspace.CurrentCamera
+local UIS, RS, ReplicatedStorage = cloneref(game:GetService("UserInputService")), cloneref(game:GetService("RunService")), cloneref(game:GetService("ReplicatedStorage"))
+local Fov, Sline = Drawing.new("Circle"), Drawing.new("Line")
+local screenSize = camera.ViewportSize
+local screenCenter = Vector2.new(screenSize.X / 2, screenSize.Y / 2)
+Fov.Position = screenCenter Fov.Radius = 150 Fov.Color = Color3.fromRGB(255, 0, 255) Fov.Visible = true Sline.Color = Color3.fromRGB(255, 255, 255) Sline.Thickness = 1 Sline.Visible = true Sline.ZIndex = 1
+local getclosest = function() local closestModel, closestData = nil, nil local closestMagnitude = math.huge local camera = workspace.CurrentCamera for _, v in pairs(debug.getupvalue(modules.Player.GetPlayerModel, 1) or {}) do if v.model:FindFirstChild("Head") and not v.sleeping then local pos, onScreen = camera:WorldToViewportPoint(v.model:GetPivot().Position) if onScreen then local magnitude = (Vector2.new(pos.X, pos.Y) - screenCenter).Magnitude local playerDistance = (workspace.Ignore.LocalCharacter.Middle:GetPivot().Position - v.model:GetPivot().Position).Magnitude if magnitude < Fov.Radius and playerDistance <= 9999 and magnitude < closestMagnitude then closestMagnitude = magnitude closestModel = v.model closestData = v end end end end return closestModel, closestData end
+game:GetService("RunService").RenderStepped:Connect(function() getgenv().SilentTarget = getclosest() if getgenv().SilentTarget and getgenv().SilentTarget:FindFirstChild("Head") then local head_pos = getgenv().SilentTarget.Head.Position local screenPos, onScreen = camera:WorldToViewportPoint(head_pos) if onScreen then Sline.From = screenCenter Sline.To = Vector2.new(screenPos.X, screenPos.Y) Sline.Visible = true else Sline.Visible = false end else Sline.Visible = false end end)
+local RunService, UserInputService, hue, speed = game:GetService("RunService"), game:GetService("UserInputService"), 0, 0.7 RunService.RenderStepped:Connect(function(dt) hue = (hue + (dt * speed * 100)) % 360 Fov.Color = Color3.fromHSV(hue / 360, 1, 1) end)  
+local ProjectileDrop = function() local mod = modules.FPS.GetEquippedItem() if not mod or not mod.id then return 0, 0 end local itemConfig = require(game:GetService("ReplicatedStorage").ItemConfigs[mod.id]) return mod.id, itemConfig.ProjectileSpeed, itemConfig.ProjectileDrop end
+local predict = function(p, e, s, d) local dt = (e - p).Magnitude local x = (math.pi * 2 - math.pi / 4) / 8 local t = dt / s local py = e.Y + (x * d * t) return Vector3.new(e.X, py, e.Z) end
+local SilentAim = true
+local oldfromOrientation; oldfromOrientation = hookfunction(CFrame.fromOrientation, newcclosure(function(p, y, r)
 local tab = DrRayLibrary.newTab("combat", "ImageIdHere")
 tab.newToggle("Toggle hbe", "Toggle hbe (hitbox expander)", true, function(toggleState)
     Hitbox = toggleState 
