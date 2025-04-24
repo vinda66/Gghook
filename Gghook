@@ -3,7 +3,7 @@
 -- Locals to call the ui
 local DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/DrRay-UI-Library/main/DrRay.lua"))()
 --
-local window = DrRayLibrary:Load("Ez bans.exe", "Default")
+local window = DrRayLibrary:Load("GGhook", "Default")
 -- Combat
 local tab = DrRayLibrary.newTab("Combat", "ImageIdHere")
 --
@@ -36,59 +36,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
         modifyPlayerHeads()
     end
 end)
-tab.newToggle("kill aura", "kill aura(kill aura) ", true function(toggleState)
 
---* Kill Aura *--
-
-function Functions:GetLocalToolName()
-if getrenv()._G.modules.FPS.GetEquippedItem() == nil then return 0,0 end
-local mod = require(game:GetService("ReplicatedStorage").ItemConfigs[getrenv()._G.modules.FPS.GetEquippedItem().id])
-for i,v in pairs(mod) do
-if i == "HandModel" then
-	return mod.HandModel
-end
-end
-return 0,0
-end
-local killauradistance = 8
-local function GetPlayer()
-local closest,PlayerDistance,playerTable = nil,math.huge,nil
-for i,v in pairs(getupvalues(getrenv()._G.modules.Player.GetPlayerModel)[1]) do
-if v.model:FindFirstChild("HumanoidRootPart") then
-	local Mouse = game.Players.LocalPlayer:GetMouse()
-	local pos,OnScreen = Camera.WorldToViewportPoint(Camera, v.model:GetPivot().Position)
-	local PlayerDistance = (CharcaterMiddle:GetPivot().Position-v.model:GetPivot().Position).Magnitude
-	Distance = (game.Workspace.Ignore.LocalCharacter.Middle.Position - v.model:GetPivot().Position).Magnitude
-	if PlayerDistance <= killauradistance and OnScreen == true then
-		closest = v.model;PlayerDistance = PlayerDistance;playerTable=v
-	end
-end
-end
-return closest,playerTable
-end
-
-local KAHitPartSelected = "Head"
-local Wait = 0.95
-local AuraGoodToUse = false
-KillAuraTab:AddToggle('KillAura',{Text='kill aura',Default=false}):AddKeyPicker('KillAuraKey', {Default='Non',SyncToggleState=true,Mode='Toggle',Text='Kill Aura',NoUI=false})
-local PlayerID = nil
-local Bypass; Bypass = hookfunction(game:GetService("Players").LocalPlayer:FindFirstChild("RemoteEvent").FireServer,function(self, ...)
-local args = {...}
-if args[1] == 10 and args[2] == "Hit" then
-PlayerID = args[3]
-end
-return Bypass(self, unpack(args))
-end)
-task.spawn(function()
-while task.wait() do
-local state = Options.KillAuraKey:GetState()
-if state then
-local PlayerHumanoid,fr = GetPlayer()
-if PlayerHumanoid and AuraGoodToUse and PlayerHumanoid ~= nil and fr ~= nil then
-	game:GetService("Players").LocalPlayer.RemoteEvent:FireServer(10, "Swing")
-	game:GetService("Players").LocalPlayer.RemoteEvent:FireServer(10, "Hit", fr.id, PlayerHumanoid.HumanoidRootPart.Position, KAHitPartSelected, Vector3.new(-0.1275634765625, 0.5433349609375, -0.237548828125))
-	wait(Wait)
-end
 -- Visuals
 local tab = DrRayLibrary.newTab("visuals", "ImageIdHere")
 tab.newButton("esp", "high lights", function()
