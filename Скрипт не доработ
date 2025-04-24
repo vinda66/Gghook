@@ -2,32 +2,10 @@ local DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/
 local window = DrRayLibrary:Load("DrRay", "Default")
 local tab = DrRayLibrary.newTab("combat", "ImageIdHere")
 tab.newToggle("Toggle hbe", "Toggle hbe (hitbox expander)", true, function(toggleState)
-- -
-Hitbox = toggleState 
-end) 
-tab.newSlider("hitbox size", "hitbox expander slider", 7, false, function(num)
-    headsize = num
-end)
---
-local function modifyPlayerHeads()
-    for i, v in next, game.Workspace:GetChildren() do
-        if v.Name == "Model" and v:FindFirstChild("Head") then
-            local head = v.Head
-            if head then
-                local success, _ = pcall(function()
-                    head.Size = Vector3.new(headsize, headsize, headsize)
-                    head.Transparency = 0.5
-                end)
-                if not success then
-                    warn("Failed to modify head for player:", v.Name)
-                end
-            end
-        end
-    end
-end
---
-game:GetService("RunService").RenderStepped:Connect(function()
-    if Hitbox then
-        modifyPlayerHeads()
-    end
-end)
+setfflag('DebugRunParallelLuaOnMainThread','True');
+queue_on_teleport([[
+ если (не game:IsLoaded()) то
+ game.Loaded:Wait();
+ конец;
+ setfflag('DebugRunParallelLuaOnMainThread','False');
+]]);
