@@ -6,43 +6,11 @@ local DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/
 local window = DrRayLibrary:Load("Ez bans.exe", "Default")
 -- Combat
 local tab = DrRayLibrary.newTab("Combat", "ImageIdHere")
-tab.newButton("silent aim", "", function()
-local modules = { ["Camera"] = {}, ["Player"] = {}, ["Character"] = {}, ["Inventory"] = {}, ["RangedWeapon"] = {}, ["BowSpecial"] = {}, ["FPS"] = {}, ["NetWork"] = {}, ["ClimbingPick"] = {}, ["BuildingTool"] = {}, ["Consumable"] = {}, ["Melee"] = {}, ["MiningDrill"] = {}, ["PlaceEntity"] = {}, ["PortableAnvil"] = {}, ["PortableWorkbench"] = {}, ["InputManager"] = {}, ["Particle"] = {}, ["Settings"] = {}, ["Sound"] = {}, ["UI"] = {}, }
-for _, v in pairs(getgc(true)) do if typeof(v) == "function" and islclosure(v) then local info = debug.getinfo(v) local name = string.match(info.short_src, "%.([%w_]+)$") if name and modules[name] and info.name ~= nil then modules[name][info.name] = info.func end end end
-local workspace,camera = cloneref(game:GetService("Workspace")), workspace.CurrentCamera
-local UIS, RS, ReplicatedStorage = cloneref(game:GetService("UserInputService")), cloneref(game:GetService("RunService")), cloneref(game:GetService("ReplicatedStorage"))
-local Fov, Sline = Drawing.new("Circle"), Drawing.new("Line")
-local screenSize = camera.ViewportSize
-local screenCenter = Vector2.new(screenSize.X / 2, screenSize.Y / 2)
-Fov.Position = screenCenter Fov.Radius = 150 Fov.Color = Color3.fromRGB(255, 0, 255) Fov.Visible = true Sline.Color = Color3.fromRGB(255, 255, 255) Sline.Thickness = 1 Sline.Visible = true Sline.ZIndex = 1
-local getclosest = function() local closestModel, closestData = nil, nil local closestMagnitude = math.huge local camera = workspace.CurrentCamera for _, v in pairs(debug.getupvalue(modules.Player.GetPlayerModel, 1) or {}) do if v.model:FindFirstChild("Head") and not v.sleeping then local pos, onScreen = camera:WorldToViewportPoint(v.model:GetPivot().Position) if onScreen then local magnitude = (Vector2.new(pos.X, pos.Y) - screenCenter).Magnitude local playerDistance = (workspace.Ignore.LocalCharacter.Middle:GetPivot().Position - v.model:GetPivot().Position).Magnitude if magnitude < Fov.Radius and playerDistance <= 9999 and magnitude < closestMagnitude then closestMagnitude = magnitude closestModel = v.model closestData = v end end end end return closestModel, closestData end
-game:GetService("RunService").RenderStepped:Connect(function() getgenv().SilentTarget = getclosest() if getgenv().SilentTarget and getgenv().SilentTarget:FindFirstChild("Head") then local head_pos = getgenv().SilentTarget.Head.Position local screenPos, onScreen = camera:WorldToViewportPoint(head_pos) if onScreen then Sline.From = screenCenter Sline.To = Vector2.new(screenPos.X, screenPos.Y) Sline.Visible = true else Sline.Visible = false end else Sline.Visible = false end end)
-local RunService, UserInputService, hue, speed = game:GetService("RunService"), game:GetService("UserInputService"), 0, 0.7 RunService.RenderStepped:Connect(function(dt) hue = (hue + (dt * speed * 100)) % 360 Fov.Color = Color3.fromHSV(hue / 360, 1, 1) end)  
-local ProjectileDrop = function() local mod = modules.FPS.GetEquippedItem() if not mod or not mod.id then return 0, 0 end local itemConfig = require(game:GetService("ReplicatedStorage").ItemConfigs[mod.id]) return mod.id, itemConfig.ProjectileSpeed, itemConfig.ProjectileDrop end
-local predict = function(p, e, s, d) local dt = (e - p).Magnitude local x = (math.pi * 2 - math.pi / 4) / 8 local t = dt / s local py = e.Y + (x * d * t) return Vector3.new(e.X, py, e.Z) end
-local SilentAim = true
-local oldfromOrientation; oldfromOrientation = hookfunction(CFrame.fromOrientation, newcclosure(function(p, y, r)
-    if SilentAim and getgenv().SilentTarget and debug.info(3, "n") == "fire" then
-        local id, speed, drop = ProjectileDrop()
-        local targetHead = getgenv().SilentTarget.Head
-        if targetHead then
-            local origin = modules.Camera.GetCFrame()
-            local Camera = game.workspace.ColVn
-            local cameraPosition = Camera.CFrame.Position
-            local predictedPos = predict(origin.Position, targetHead.Position, speed, drop)
-            if predictedPos then
-                return Camera.CFrame:Inverse() * CFrame.lookAt(cameraPosition, predictedPos)
-            end
-        end
-    end
-    return oldfromOrientation(p, y, r)
-end))
-end)
 --
 tab.newToggle("Toggle hbe", "Toggle hbe (hitbox expander)", true, function(toggleState)
     Hitbox = toggleState 
 end) 
-tab.newSlider("hitbox size", "hitbox expander slider", 7, false, function(num)
+tab.newSlider("hitbox size", "hitbox expander slider", 30, false, function(num)
     headsize = num
 end)
 --
@@ -67,6 +35,87 @@ game:GetService("RunService").RenderStepped:Connect(function()
     if Hitbox then
         modifyPlayerHeads()
     end
+end)
+tab.newToggle("kill aura", "kill aura(kill aura) ", true function(toggleState)
+local KillAuraTabBox = Tabs.CombatTab:AddLeftTabbox('kill aura')
+local KillAuraTab = KillAuraTabBox:AddTab('kill aura')
+
+--* Kill Aura *--
+
+function Functions:GetLocalToolName()
+if getrenv()._G.modules.FPS.GetEquippedItem() == nil then return 0,0 end
+local mod = require(game:GetService("ReplicatedStorage").ItemConfigs[getrenv()._G.modules.FPS.GetEquippedItem().id])
+for i,v in pairs(mod) do
+if i == "HandModel" then
+	return mod.HandModel
+end
+end
+return 0,0
+end
+local killauradistance = 8
+local function GetPlayer()
+local closest,PlayerDistance,playerTable = nil,math.huge,nil
+for i,v in pairs(getupvalues(getrenv()._G.modules.Player.GetPlayerModel)[1]) do
+if v.model:FindFirstChild("HumanoidRootPart") then
+	local Mouse = game.Players.LocalPlayer:GetMouse()
+	local pos,OnScreen = Camera.WorldToViewportPoint(Camera, v.model:GetPivot().Position)
+	local PlayerDistance = (CharcaterMiddle:GetPivot().Position-v.model:GetPivot().Position).Magnitude
+	Distance = (game.Workspace.Ignore.LocalCharacter.Middle.Position - v.model:GetPivot().Position).Magnitude
+	if PlayerDistance <= killauradistance and OnScreen == true then
+		closest = v.model;PlayerDistance = PlayerDistance;playerTable=v
+	end
+end
+end
+return closest,playerTable
+end
+
+local KAHitPartSelected = "Head"
+local Wait = 0.95
+local AuraGoodToUse = false
+KillAuraTab:AddToggle('KillAura',{Text='kill aura',Default=false}):AddKeyPicker('KillAuraKey', {Default='Non',SyncToggleState=true,Mode='Toggle',Text='Kill Aura',NoUI=false})
+local PlayerID = nil
+local Bypass; Bypass = hookfunction(game:GetService("Players").LocalPlayer:FindFirstChild("RemoteEvent").FireServer,function(self, ...)
+local args = {...}
+if args[1] == 10 and args[2] == "Hit" then
+PlayerID = args[3]
+end
+return Bypass(self, unpack(args))
+end)
+task.spawn(function()
+while task.wait() do
+local state = Options.KillAuraKey:GetState()
+if state then
+local PlayerHumanoid,fr = GetPlayer()
+if PlayerHumanoid and AuraGoodToUse and PlayerHumanoid ~= nil and fr ~= nil then
+	game:GetService("Players").LocalPlayer.RemoteEvent:FireServer(10, "Swing")
+	game:GetService("Players").LocalPlayer.RemoteEvent:FireServer(10, "Hit", fr.id, PlayerHumanoid.HumanoidRootPart.Position, KAHitPartSelected, Vector3.new(-0.1275634765625, 0.5433349609375, -0.237548828125))
+	wait(Wait)
+end
+end
+end
+end)
+task.spawn(function()
+while task.wait() do
+local Weapon = Functions:GetLocalToolName()
+if Weapon == "MiningDrill" then
+Wait = 0.12
+else
+Wait = 0.95
+end
+if Weapon == "Hammer" or "Crowbar" or "StoneHammer" or "SteelHammer" or "MiningDrill" or "IronHammer" then
+AuraGoodToUse = true
+else
+AuraGoodToUse = false
+end
+end
+end)
+
+KillAuraTab:AddSlider('', {Text = 'distance:', Default = 8, Min = 5, Max = 10, Rounding = 0, Suffix = " studs", Compact = false}):OnChanged(function(Value)
+killauradistance = Value
+end)
+
+KillAuraTab:AddDropdown('', {Values = {"Head", "HumanoidRootPart", "Torso", "LowerTorso", "RightHand", "LeftHand", "RightFoot", "LeftFoot"}, Default = 1, Multi = false, Text = 'hitpart:'}):OnChanged(function(Value)
+KAHitPartSelected = Value
 end)
 -- Visuals
 local tab = DrRayLibrary.newTab("visuals", "ImageIdHere")
