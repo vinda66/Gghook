@@ -37,8 +37,6 @@ game:GetService("RunService").RenderStepped:Connect(function()
     end
 end)
 tab.newToggle("kill aura", "kill aura(kill aura) ", true function(toggleState)
-local KillAuraTabBox = Tabs.CombatTab:AddLeftTabbox('kill aura')
-local KillAuraTab = KillAuraTabBox:AddTab('kill aura')
 
 --* Kill Aura *--
 
@@ -91,32 +89,6 @@ if PlayerHumanoid and AuraGoodToUse and PlayerHumanoid ~= nil and fr ~= nil then
 	game:GetService("Players").LocalPlayer.RemoteEvent:FireServer(10, "Hit", fr.id, PlayerHumanoid.HumanoidRootPart.Position, KAHitPartSelected, Vector3.new(-0.1275634765625, 0.5433349609375, -0.237548828125))
 	wait(Wait)
 end
-end
-end
-end)
-task.spawn(function()
-while task.wait() do
-local Weapon = Functions:GetLocalToolName()
-if Weapon == "MiningDrill" then
-Wait = 0.12
-else
-Wait = 0.95
-end
-if Weapon == "Hammer" or "Crowbar" or "StoneHammer" or "SteelHammer" or "MiningDrill" or "IronHammer" then
-AuraGoodToUse = true
-else
-AuraGoodToUse = false
-end
-end
-end)
-
-KillAuraTab:AddSlider('', {Text = 'distance:', Default = 8, Min = 5, Max = 10, Rounding = 0, Suffix = " studs", Compact = false}):OnChanged(function(Value)
-killauradistance = Value
-end)
-
-KillAuraTab:AddDropdown('', {Values = {"Head", "HumanoidRootPart", "Torso", "LowerTorso", "RightHand", "LeftHand", "RightFoot", "LeftFoot"}, Default = 1, Multi = false, Text = 'hitpart:'}):OnChanged(function(Value)
-KAHitPartSelected = Value
-end)
 -- Visuals
 local tab = DrRayLibrary.newTab("visuals", "ImageIdHere")
 tab.newButton("esp", "high lights", function()
