@@ -92,33 +92,6 @@ workspace.DescendantAdded:Connect(function(descendant)
     end
 end)
 end)
-tab.newButton("esp","esp", function () 
-local Players = Tabs.Visuals:Section("players", "left")
-    --
-
-    Players:Toggle({ title = "enabled", default = false, callback = function(bool)
-        framework.esp.enabled = bool
-    end})
-
-    Players:Toggle({ title = "box", default = false, callback = function(bool)
-        framework.esp.box = bool
-    end})
-
-    Players:Toggle({ title = "names", default = false, callback = function(bool)
-        framework.esp.name = bool
-    end})
-
-    Players:Toggle({ title = "weapon", default = false, callback = function(bool)
-        framework.esp.weapon = bool
-    end})
-
-    Players:Toggle({ title = "health bar", default = false, callback = function(bool)
-        framework.esp.healthbar = bool
-    end})
-
-    Players:Toggle({ title = "sleep check", default = false, callback = function(bool)
-        framework.esp.sleep = bool
-    end})
 -- ore esp
 tab.newButton("ore esp", "blue", function()
 local HighlightColor = Color3.fromRGB(100, 200, 255)
