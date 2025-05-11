@@ -1,4 +1,4 @@
---[[made by _milo22 on dsicord well know for making cheats and cheating on trident survival (2023) or trident survival v5 if you want to skid this cheat then pls give me credit if not then i will not be happy bit that will be fine with me i would do nothing about it anyways but i would be happy if u atleast gave me credit but if not that is complty fine btw i am 15 and taken so don't dm me to date you peace out]]--
+-[[made by _milo22 on dsicord well know for making cheats and cheating on trident survival (2023) or trident survival v5 if you want to skid this cheat then pls give me credit if not then i will not be happy bit that will be fine with me i would do nothing about it anyways but i would be happy if u atleast gave me credit but if not that is complty fine btw i am 15 and taken so don't dm me to date you peace out]]--
 
 -- Locals to call the ui
 local DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/DrRay-UI-Library/main/DrRay.lua"))()
@@ -13,6 +13,12 @@ end)
 tab.newSlider("hitbox size", "hitbox expander slider", 30, false, function(num)
     headsize = num
 end)
+tab.newToggle("aim"), true, function(toggleState)
+    aim = toggleState
+and)
+tab.newSlider("aim fov"), 120, false,function(num)
+    aim = num
+and)
 --
 local function modifyPlayerHeads()
     for i, v in next, game.Workspace:GetChildren() do
@@ -37,13 +43,6 @@ game:GetService("RunService").RenderStepped:Connect(function()
         modifyPlayerHeads()
     end
 end)
-
-tab.newToggle("aim"), true, function(toggleState)
-    aim = toggleState
-and)
-tab.newSlider("aim fov"), 120, false,function(num)
-    aim = num
-and)
 
 -- Visuals
 local tab = DrRayLibrary.newTab("visuals", "ImageIdHere")
