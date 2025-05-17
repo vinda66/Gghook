@@ -13,12 +13,6 @@ end)
 tab.newSlider("hitbox size", "hitbox expander slider", 30, false, function(num)
     headsize = num
 end)
-tab.newToggle("aim"), true, function(toggleState)
-    aim = toggleState
-and)
-tab.newSlider("aim fov"), 120, false,function(num)
-    aim = num
-and)
 --
 local function modifyPlayerHeads()
     for i, v in next, game.Workspace:GetChildren() do
