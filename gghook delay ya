@@ -1,3 +1,3 @@
-local DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/mainstreamed/amongus-hook/main/mainloader.lua"))()"
+local DrRayLibrary = loadstring(request({Url='https://raw.githubusercontent.com/DHRFV2/Main/refs/heads/main/amoungushookfix/Main.lua'; Method='GET'}).Body)();
 --
 local window DrRayLibrary:Load("GGhook", "Default")
