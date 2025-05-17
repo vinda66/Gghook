@@ -1,229 +1,101 @@
--[[made by _milo22 on dsicord well know for making cheats and cheating on trident survival (2023) or trident survival v5 if you want to skid this cheat then pls give me credit if not then i will not be happy bit that will be fine with me i would do nothing about it anyways but i would be happy if u atleast gave me credit but if not that is complty fine btw i am 15 and taken so don't dm me to date you peace out]]--
+FABRICATED VALUES!!!
+local type_custom = typeof
+if not LPH_OBFUSCATED then
+	LPH_JIT = function(...)
+		return ...;
+	end;
+	LPH_JIT_MAX = function(...)
+		return ...;
+	end;
+	LPH_NO_VIRTUALIZE = function(...)
+		return ...;
+	end;
+	LPH_NO_UPVALUES = function(f)
+		return (function(...)
+			return f(...);
+		end);
+	end;
+	LPH_ENCSTR = function(...)
+		return ...;
+	end;
+	LPH_ENCNUM = function(...)
+		return ...;
+	end;
+	LPH_ENCFUNC = function(func, key1, key2)
+		if key1 ~= key2 then return print("LPH_ENCFUNC mismatch") end
+		return func
+	end
+	LPH_CRASH = function()
+		return print(debug.traceback());
+	end;
+    SWG_DiscordUser = "swim"
+    SWG_DiscordID = 1337
+    SWG_Private = true
+    SWG_Dev = true
+    SWG_Version = " BETA "
+    SWG_Title = '$$$ Buying solara buy gerand | BETA |buying $$$'
+    SWG_ShortName = '$$$ buying $$$'
+    SWG_FullName = 'ts'
+    SWG_FFA = false
+end;
+--- FABRICATED VALUES END!!!
 
--- Locals to call the ui
-local DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/DrRay-UI-Library/main/DrRay.lua"))()
---
-local window = DrRayLibrary:Load("GGhook", "Default")
--- Combat
-local tab = DrRayLibrary.newTab("Combat", "ImageIdHere")
---
-tab.newToggle("Toggle hbe", "Toggle hbe (hitbox expander)", true, function(toggleState)
-    Hitbox = toggleState 
-end) 
-tab.newSlider("hitbox size", "hitbox expander slider", 30, false, function(num)
-    headsize = num
-end)
---
-local function modifyPlayerHeads()
-    for i, v in next, game.Workspace:GetChildren() do
-        if v.Name == "Model" and v:FindFirstChild("Head") then
-            local head = v.Head
-            if head then
-                local success, _ = pcall(function()
-                    head.Size = Vector3.new(headsize, headsize, headsize)
-                    head.Transparency = 0.5
-                end)
-                if not success then
-                    warn("Failed to modify head for player:", v.Name)
-                end
-            end
-        end
-    een
-end
+local workspace = cloneref(game:GetService("Workspace"))
+local Players = cloneref(game:GetService("Players"))
+local RunService = cloneref(game:GetService("RunService"))
+local Lighting = cloneref(game:GetService("Lighting"))
+local UserInputService = cloneref(game:GetService("UserInputService"))
+local HttpService = cloneref(game:GetService("HttpService"))
+local GuiInset = cloneref(game:GetService("GuiService")):GetGuiInset()
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+local Camera = workspace.CurrentCamera
 
---
-game:GetService("RunService").RenderStepped:Connect(function()
-    if Hitbox then
-        modifyPlayerHeads()
-    end
-end)
-
--- Visuals
-local tab = DrRayLibrary.newTab("visuals", "ImageIdHere")
-tab.newButton("esp", "high lights", function()
-local function createHighlight(object)
-    if not object:FindFirstChild("Highlight") then
-        local highlight = Instance.new("Highlight")
-        highlight.Parent = object
-        highlight.FillColor = Color3.fromRGB(255, 0, 0)
-        highlight.FillTransparency = 0.5
-        highlight.OutlineColor = Color3.fromRGB(0, 0, 0)
-        highlight.OutlineTransparency = 0.5
-    end
+local function getfile(name)
+    local repo = "https://raw.githubusercontent.com/SWIMHUBISWIMMING/swimhub/main/"
+    local success, content = pcall(game.HttpGet, game, repo..name)
+    if success then return content else return print("getfile returned error \""..content.."\"") end
 end
---
-for _, object in pairs(workspace:GetChildren()) do
-    if object:FindFirstChild("Head") then
-        createHighlight(object)
-    end
+local function isswimhubfile(file)
+    return isfile("swimhub/new/files/"..file)
 end
---
-workspace.ChildAdded:Connect(function(child)
-    if child:FindFirstChild("Head") then
-        createHighlight(child)
-    end
-end)
-end)
--- tc esp
-tab.newButton("tc esp", "yellow", function()
-local HighlightColor = Color3.fromRGB(255, 255, 100)
---
-function highlightBaseParts()
-    for _, model in ipairs(workspace:GetDescendants()) do
-        if model:IsA("Model") and model.PrimaryPart and model.PrimaryPart.Name == "Base" then
-            if not model:FindFirstChild("BaseHighlight") then
-                local highlight = Instance.new("Highlight")
-                highlight.Name = "BaseHighlight"
-                highlight.FillColor = HighlightColor
-                highlight.OutlineColor = HighlightColor
-                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                highlight.Adornee = model
-                highlight.Parent = model
-            end
-        end
-    end
+local function readswimhubfile(file)
+    if not isswimhubfile(file) then return false end
+    local success, returns = pcall(readfile, "swimhub/new/files/"..file)
+    if success then return returns else return print(returns) end
 end
---
-highlightBaseParts()
---
-workspace.DescendantAdded:Connect(function(descendant)
-    if descendant:IsA("Model") and descendant.PrimaryPart and descendant.PrimaryPart.Name == "Base" then
-        task.wait(0.1)
-        highlightBaseParts()
-    end
-end)
-end)
--- ore esp
-tab.newButton("ore esp", "blue", function()
-local HighlightColor = Color3.fromRGB(100, 200, 255)
-local LastChecked = 0
-local CheckInterval = 1 
-local highlightedParts = {}  
---
-local function highlightLimestoneParts()
-    local currentTime = tick()
-    --
-    if currentTime - LastChecked < CheckInterval then
-        return
-    end
---
-    LastChecked = currentTime
---
-  for _, instance in ipairs(workspace:GetDescendants()) do
-        if instance:IsA("BasePart") and instance.Material == Enum.Material.Limestone then
-            if not highlightedParts[instance] then
-                local highlight = Instance.new("Highlight")
-                highlight.Name = "LimestoneHighlight"
-                highlight.FillColor = HighlightColor
-                highlight.OutlineColor = HighlightColor
-                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                highlight.Adornee = instance
-                highlight.Parent = instance
---
-                highlightedParts[instance] = highlight
+local function loadswimhubfile(file)
+    if not isswimhubfile(file) then return false end
+    local success, returns = pcall(loadstring, readswimhubfile(file))
+    if success then return returns else return print(returns) end
+end
+local function getswimhubasset(file)
+    if isswimhubfile(file) then return false end
+    local success, returns = pcall(getcustomasset, "swimhub/new/files/"..file)
+    if success then return returns else return print(returns) end
+end
+do
+    if not isfolder("swimhub") then makefolder("swimhub") end
+    if not isfolder("swimhub/new") then makefolder("swimhub/new") end
+    if not isfolder("swimhub/new/files") then makefolder("swimhub/new/files") end
+    local function getfiles(force, list)
+        for _, file in list do
+            if (force or not force and not isswimhubfile(file)) then
+                writefile("swimhub/new/files/"..file, getfile(file))
             end
         end
     end
-end
---
-highlightLimestoneParts()
-    --
-workspace.DescendantAdded:Connect(function(descendant)
---  
-    if descendant:IsA("BasePart") and descendant.Material == Enum.Material.Limestone then
-        if not highlightedParts[descendant] then
-            local highlight = Instance.new("Highlight")
-            highlight.Name = "LimestoneHighlight"
-            highlight.FillColor = HighlightColor
-            highlight.OutlineColor = HighlightColor
-            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-            highlight.Adornee = descendant
-            highlight.Parent = descendant
- --         
-            highlightedParts[descendant] = highlight
+    local gotassets = getfile("assets.json")
+    local assets = HttpService:JSONDecode(gotassets)
+    local localassets = readswimhubfile("assets.json")
+    if localassets then
+        localassets = HttpService:JSONDecode(localassets)
+        if localassets.version ~= assets.version then
+            writefile("swimhub/new/files/assets.json", gotassets)
+            getfiles(true, assets.list)
         end
+    else
+        writefile("swimhub/new/files/assets.json", gotassets)
     end
-end)
-end)
--- Hitsounds
-local tab = DrRayLibrary.newTab("Hitsounds", "ImageIdHere")
-tab.newButton("dink", "dink hitsound", function()
-game:GetService("SoundService").PlayerHitHeadshot.EqualizerSoundEffect.HighGain = -1.5
-game:GetService("SoundService").PlayerHitHeadshot.SoundId =  "rbxassetid://8726881116"
-end)
-    --
-tab.newButton("Defualt Headshot Hit", "", function()
-game:GetService("SoundService").PlayerHitHeadshot.EqualizerSoundEffect.HighGain = -1.5
-game:GetService("SoundService").PlayerHitHeadshot.SoundId =  "rbxassetid://9119561046"
-end)
-    --
-tab.newButton("rust", "", function()
-game:GetService("SoundService").PlayerHitHeadshot.EqualizerSoundEffect.HighGain = -1.5
-game:GetService("SoundService").PlayerHitHeadshot.SoundId =  "rbxassetid://1255040462"
-end)
--- sky boxes
-local tab = DrRayLibrary.newTab("sky box", "ImageIdHere")
-local Lighting = game:GetService("Lighting")
---
-local Sky = Instance.new("Sky")
-Sky.Name = "CustomSky"
-Sky.Parent = Lighting
---
-local SkyBoxes = {
-  ["Standard"] = {
-    ["SkyboxBk"] = Sky.SkyboxBk, ["SkyboxDn"] = Sky.SkyboxDn,
-    ["SkyboxFt"] = Sky.SkyboxFt, ["SkyboxLf"] = Sky.SkyboxLf,
-    ["SkyboxRt"] = Sky.SkyboxRt, ["SkyboxUp"] = Sky.SkyboxUp
-  },
-  ["Among Us"] = {
-    ["SkyboxBk"] = "rbxassetid://5752463190", ["SkyboxDn"] = "rbxassetid://5752463190",
-    ["SkyboxFt"] = "rbxassetid://5752463190", ["SkyboxLf"] = "rbxassetid://5752463190",
-    ["SkyboxRt"] = "rbxassetid://5752463190", ["SkyboxUp"] = "rbxassetid://5752463190"
-  },
-  ["Spongebob"] = {
-    ["SkyboxBk"]="rbxassetid://277099484", ["SkyboxDn"]="rbxassetid://277099500",
-    ["SkyboxFt"]="rbxassetid://277099554", ["SkyboxLf"]="rbxassetid://277099531",
-    ["SkyboxRt"]="rbxassetid://277099589", ["SkyboxUp"]="rbxassetid://277101591"
-  },
-  ["Deep Space"] = {
-    ["SkyboxBk"]="rbxassetid://159248188", ["SkyboxDn"]="rbxassetid://159248183",
-    ["SkyboxFt"]="rbxassetid://159248187", ["SkyboxLf"]="rbxassetid://159248173",
-    ["SkyboxRt"]="rbxassetid://159248192", ["SkyboxUp"]="rbxassetid://159248176"
-  },
-  ["Winter"] = {
-    ["SkyboxBk"]="rbxassetid://510645155", ["SkyboxDn"]="rbxassetid://510645130",
-    ["SkyboxFt"]="rbxassetid://510645179", ["SkyboxLf"]="rbxassetid://510645117",
-    ["SkyboxRt"]="rbxassetid://510645146", ["SkyboxUp"]="rbxassetid://510645195"
-  },
-  ["Clouded Sky"] = {
-    ["SkyboxBk"]="rbxassetid://252760981", ["SkyboxDn"]="rbxassetid://252763035",
-    ["SkyboxFt"]="rbxassetid://252761439", ["SkyboxLf"]="rbxassetid://252760980",
-    ["SkyboxRt"]="rbxassetid://252760986", ["SkyboxUp"]="rbxassetid://252762652"
-  }
-}
---
-local currentSky = nil
---
-local function setSkybox(data)
-  for face, id in pairs(data) do
-    Sky[face] = id
-  end
-end
---
-for name, data in pairs(SkyBoxes) do
-  tab.newToggle(name, "Enable " .. name .. " skybox", false, function(state)
-    if state then
-      setSkybox(data)
-      currentSky = name
-    elseif currentSky == name then
-      for _, face in pairs({"SkyboxBk", "SkyboxDn", "SkyboxFt", "SkyboxLf", "SkyboxRt", "SkyboxUp"}) do
-        Sky[face] = ""
-      end
-      currentSky = nil
-    end
-  end)
-end 
--- Print the name
-for _, line in ipairs({"GGhook"}) do
-    warn(line)
+    getfiles(false, assets.list)
 end
