@@ -1,101 +1,16 @@
-FABRICATED VALUES!!!
-local type_custom = typeof
-if not LPH_OBFUSCATED then
-	LPH_JIT = function(...)
-		return ...;
-	end;
-	LPH_JIT_MAX = function(...)
-		return ...;
-	end;
-	LPH_NO_VIRTUALIZE = function(...)
-		return ...;
-	end;
-	LPH_NO_UPVALUES = function(f)
-		return (function(...)
-			return f(...);
-		end);
-	end;
-	LPH_ENCSTR = function(...)
-		return ...;
-	end;
-	LPH_ENCNUM = function(...)
-		return ...;
-	end;
-	LPH_ENCFUNC = function(func, key1, key2)
-		if key1 ~= key2 then return print("LPH_ENCFUNC mismatch") end
-		return func
-	end
-	LPH_CRASH = function()
-		return print(debug.traceback());
-	end;
-    SWG_DiscordUser = "swim"
-    SWG_DiscordID = 1337
-    SWG_Private = true
-    SWG_Dev = true
-    SWG_Version = " BETA "
-    SWG_Title = '$$$ Buying solara buy gerand | BETA |buying $$$'
-    SWG_ShortName = '$$$ buying $$$'
-    SWG_FullName = 'ts'
-    SWG_FFA = false
+loadstring(game:HttpGet('https://raw.githubusercontent.com/rremedyy/rremedyy/main/drawing.lua'))();
+local old_pcall = clonefunction(pcall);
+getgenv().request = function(data, ...) -- 他媽的偵測到海浪 😡🤬
+      warn('反轉網站後端 ⚕♌♋♉☣☢☢');
+      warn(data.Url);
+      if (string.find(data.Url, 'replit')) then
+            warn('偵測到狗屎白名單🙉🙄😜🕎');
+            return {StatusCode=200,Body={match=function()return 'HWID is whitelisted'end}};
+      end;
+      return http_request(data, ...);
 end;
---- FABRICATED VALUES END!!!
-
-local workspace = cloneref(game:GetService("Workspace"))
-local Players = cloneref(game:GetService("Players"))
-local RunService = cloneref(game:GetService("RunService"))
-local Lighting = cloneref(game:GetService("Lighting"))
-local UserInputService = cloneref(game:GetService("UserInputService"))
-local HttpService = cloneref(game:GetService("HttpService"))
-local GuiInset = cloneref(game:GetService("GuiService")):GetGuiInset()
-local LocalPlayer = Players.LocalPlayer
-local Mouse = LocalPlayer:GetMouse()
-local Camera = workspace.CurrentCamera
-
-local function getfile(name)
-    local repo = "https://raw.githubusercontent.com/SWIMHUBISWIMMING/swimhub/main/"
-    local success, content = pcall(game.HttpGet, game, repo..name)
-    if success then return content else return print("getfile returned error \""..content.."\"") end
-end
-local function isswimhubfile(file)
-    return isfile("swimhub/new/files/"..file)
-end
-local function readswimhubfile(file)
-    if not isswimhubfile(file) then return false end
-    local success, returns = pcall(readfile, "swimhub/new/files/"..file)
-    if success then return returns else return print(returns) end
-end
-local function loadswimhubfile(file)
-    if not isswimhubfile(file) then return false end
-    local success, returns = pcall(loadstring, readswimhubfile(file))
-    if success then return returns else return print(returns) end
-end
-local function getswimhubasset(file)
-    if isswimhubfile(file) then return false end
-    local success, returns = pcall(getcustomasset, "swimhub/new/files/"..file)
-    if success then return returns else return print(returns) end
-end
-do
-    if not isfolder("swimhub") then makefolder("swimhub") end
-    if not isfolder("swimhub/new") then makefolder("swimhub/new") end
-    if not isfolder("swimhub/new/files") then makefolder("swimhub/new/files") end
-    local function getfiles(force, list)
-        for _, file in list do
-            if (force or not force and not isswimhubfile(file)) then
-                writefile("swimhub/new/files/"..file, getfile(file))
-            end
-        end
-    end
-    local gotassets = getfile("assets.json")
-    local assets = HttpService:JSONDecode(gotassets)
-    local localassets = readswimhubfile("assets.json")
-    if localassets then
-        localassets = HttpService:JSONDecode(localassets)
-        if localassets.version ~= assets.version then
-            writefile("swimhub/new/files/assets.json", gotassets)
-            getfiles(true, assets.list)
-        end
-    else
-        writefile("swimhub/new/files/assets.json", gotassets)
-    end
-    getfiles(false, assets.list)
-end
+getgenv().pcall = function(...)
+    local ret = {old_pcall(...)};
+    table.remove(ret, 1);
+    return true, unpack(ret);
+end;
