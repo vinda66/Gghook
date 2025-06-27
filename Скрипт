@@ -1,0 +1,184 @@
+--[[
+  Advanced Roblox Injector Menu
+  Features: ESP, Kill Aura, Teleport, Speed Hack and more
+]]
+
+local Injector = {
+    title = "⚡ ROBLOX EXPLOIT MENU ⚡",
+    version = "v2.4.1",
+    items = {},
+    gameProcess = "RobloxPlayerBeta.exe",
+    pid = nil,
+    injected = false,
+    espEnabled = false,
+    killAuraEnabled = false,
+    speedHackValue = 1,
+    jumpPower = 1
+}
+
+-- Helper functions
+function Injector.clearScreen()
+    os.execute("cls || clear")
+end
+
+function Injector.printHeader()
+    print(string.rep("=", 50))
+    print(Injector.title .. " " .. Injector.version)
+    print(string.rep("=", 50))
+    print(string.format("Status: %s", Injector.injected and "✅ INJECTED" or "❌ NOT INJECTED"))
+    print(string.format("Process: %s (PID: %s)", Injector.gameProcess, Injector.pid or "N/A"))
+    print(string.rep("-", 50))
+end
+
+-- Menu functions
+function Injector.addItem(label, func, desc)
+    table.insert(Injector.items, {
+        label = label,
+        func = func,
+        desc = desc
+    })
+end
+
+function Injector.showMenu()
+    while true do
+        Injector.clearScreen()
+        Injector.printHeader()
+        
+        -- Print menu items
+        for i, item in ipairs(Injector.items) do
+            print(string.format("[%d] %-20s - %s", i, item.label, item.desc))
+        end
+        
+        print(string.rep("-", 50))
+        print("[0] Exit")
+        print(string.rep("=", 50))
+        
+        -- Get user input
+        io.write(">> Select option: ")
+        local choice = tonumber(io.read()) or -1
+        
+        if choice == 0 then
+            break
+        elseif Injector.items[choice] then
+            Injector.clearScreen()
+            Injector.printHeader()
+            Injector.items[choice].func()
+            print("\nPress Enter to continue...")
+            io.read()
+        else
+            print("Invalid option!")
+            os.execute("sleep 1")
+        end
+    end
+end
+
+-- Injection functions
+local function findRobloxProcess()
+    print("\n🔍 Searching for Roblox process...")
+    -- Simulate process finding
+    Injector.pid = math.random(1000, 9999)
+    print("✅ Found Roblox process (PID: " .. Injector.pid .. ")")
+end
+
+local function inject()
+    if not Injector.pid then
+        print("❌ Please find Roblox process first!")
+        return
+    end
+    
+    print("\n💉 Injecting into Roblox...")
+    -- Simulate injection
+    Injector.injected = true
+    print("✅ Successfully injected into Roblox!")
+end
+
+-- Feature functions
+local function toggleESP()
+    if not Injector.injected then
+        print("❌ Please inject first!")
+        return
+    end
+    
+    Injector.espEnabled = not Injector.espEnabled
+    print("\n" .. (Injector.espEnabled and "🟢 ESP ENABLED" or "🔴 ESP DISABLED"))
+    -- Actual ESP implementation would go here
+    print(Injector.espEnabled and "Showing player outlines, names and distances" or "ESP features disabled")
+end
+
+local function toggleKillAura()
+    if not Injector.injected then
+        print("❌ Please inject first!")
+        return
+    end
+    
+    Injector.killAuraEnabled = not Injector.killAuraEnabled
+    print("\n" .. (Injector.killAuraEnabled and "🟢 KILL AURA ENABLED" or "🔴 KILL AURA DISABLED"))
+    -- Actual Kill Aura implementation
+    print(Injector.killAuraEnabled and "Automatically attacking nearby players" or "Kill Aura disabled")
+    
+    if Injector.killAuraEnabled then
+        io.write("Set kill aura range (default 20): ")
+        local range = tonumber(io.read()) or 20
+        print("Kill Aura range set to " .. range .. " studs")
+    end
+end
+
+local function setSpeedHack()
+    if not Injector.injected then
+        print("❌ Please inject first!")
+        return
+    end
+    
+    io.write("\nEnter speed multiplier (1-50): ")
+    Injector.speedHackValue = math.clamp(tonumber(io.read()) or 1, 1, 50)
+    print("✅ Speed set to " .. Injector.speedHackValue .. "x")
+    -- Actual speed hack implementation
+end
+
+local function setJumpPower()
+    if not Injector.injected then
+        print("❌ Please inject first!")
+        return
+    end
+    
+    io.write("\nEnter jump power multiplier (1-10): ")
+    Injector.jumpPower = math.clamp(tonumber(io.read()) or 1, 1, 10)
+    print("✅ Jump power set to " .. Injector.jumpPower .. "x")
+    -- Actual jump power implementation
+end
+
+local function teleportToPlayer()
+    if not Injector.injected then
+        print("❌ Please inject first!")
+        return
+    end
+    
+    io.write("\nEnter player name to teleport to: ")
+    local player = io.read()
+    print("🚀 Teleporting to " .. player .. "...")
+    -- Actual teleport implementation
+end
+
+local function noclipToggle()
+    if not Injector.injected then
+        print("❌ Please inject first!")
+        return
+    end
+    
+    print("\n🚫✂️ Noclip " .. (Injector.noclipEnabled and "disabled" or "enabled"))
+    Injector.noclipEnabled = not Injector.noclipEnabled
+    -- Actual noclip implementation
+end
+
+-- Add menu items
+Injector.addItem("Find Process", findRobloxProcess, "Locate Roblox process")
+Injector.addItem("Inject", inject, "Inject exploit into Roblox")
+Injector.addItem("Toggle ESP", toggleESP, "Enable/disable ESP features")
+Injector.addItem("Toggle Kill Aura", toggleKillAura, "Enable/disable automatic attacks")
+Injector.addItem("Set Speed", setSpeedHack, "Modify player movement speed")
+Injector.addItem("Set Jump Power", setJumpPower, "Modify player jump height")
+Injector.addItem("Teleport to Player", teleportToPlayer, "Teleport to another player")
+Injector.addItem("Toggle Noclip", noclipToggle, "Walk through walls")
+
+-- Start the menu
+Injector.showMenu()
