@@ -1,0 +1,109 @@
+--[[
+  Простое рабочее меню для Lua-скриптов
+  Позволяет динамически добавлять пункты меню и функции
+]]
+
+-- Основная таблица меню
+local menu = {
+    title = "ГЛАВНОЕ МЕНЮ",
+    items = {},
+    exitOption = 0
+}
+
+-- Функция добавления нового пункта меню
+function menu.addItem(label, action, description)
+    table.insert(menu.items, {
+        label = label,
+        action = action,
+        description = description or ""
+    })
+end
+
+-- Функция отображения меню
+function menu.show()
+    while true do
+        -- Очистка экрана (работает в большинстве терминалов)
+        print("\027[2J\027[H")
+        
+        -- Вывод заголовка
+        print(string.rep("=", 50))
+        print(string.format("%20s", menu.title))
+        print(string.rep("=", 50))
+        
+        -- Вывод пунктов меню
+        for i, item in ipairs(menu.items) do
+            print(string.format("%2d. %-20s %s", i, item.label, item.description))
+        end
+        
+        -- Вывод опции выхода
+        print(string.rep("-", 50))
+        print(string.format("%2d. Выход", menu.exitOption))
+        print(string.rep("=", 50))
+        
+        -- Запрос выбора пользователя
+        io.write("Выберите пункт: ")
+        local choice = tonumber(io.read())
+        
+        -- Обработка выбора
+        if choice == menu.exitOption then
+            print("Завершение работы...")
+            break
+        elseif choice and menu.items[choice] then
+            print("\nВыбрано: " .. menu.items[choice].label)
+            print(string.rep("-", 50))
+            
+            -- Выполнение выбранной функции
+            local success, err = pcall(menu.items[choice].action)
+            if not success then
+                print("Ошибка выполнения: " .. err)
+            end
+            
+            -- Пауза перед возвратом в меню
+            print("\nНажмите Enter чтобы продолжить...")
+            io.read()
+        else
+            print("Неверный выбор! Попробуйте снова.")
+            os.execute("sleep 1") -- Пауза 1 секунда (для Linux/macOS)
+            -- Для Windows можно использовать: os.execute("timeout 1 >nul")
+        end
+    end
+end
+
+-- Примеры функций для демонстрации работы меню
+
+local function showDateTime()
+    print("Текущая дата и время: " .. os.date("%d.%m.%Y %H:%M:%S"))
+end
+
+local function calculate()
+    print("КАЛЬКУЛЯТОР")
+    io.write("Введите первое число: ")
+    local a = tonumber(io.read()) or 0
+    io.write("Введите второе число: ")
+    local b = tonumber(io.read()) or 0
+    
+    print("\nРезультаты:")
+    print(a .. " + " .. b .. " = " .. (a + b))
+    print(a .. " - " .. b .. " = " .. (a - b))
+    print(a .. " * " .. b .. " = " .. (a * b))
+    if b ~= 0 then
+        print(a .. " / " .. b .. " = " .. (a / b))
+    else
+        print("Деление на ноль!")
+    end
+end
+
+local function listFiles()
+    print("СОДЕРЖИМОЕ ТЕКУЩЕЙ ДИРЕКТОРИИ")
+    -- Для Linux/macOS
+    os.execute("ls -l")
+    -- Для Windows можно использовать: os.execute("dir")
+end
+
+-- Добавляем пункты в меню
+menu.addItem("Дата и время", showDateTime, "Показать текущую дату и время")
+menu.addItem("Калькулятор", calculate, "Простой калькулятор")
+menu.addItem("Список файлов", listFiles, "Показать файлы в текущей директории")
+
+-- Запускаем меню
+menu.show()
